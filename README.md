@@ -10,5 +10,9 @@ Smart Eye is an app that uses computer vision to perform demographic segmentatio
 
 **Angular:** A Javascript front-end framework.
 
-## Clone the project
+## Getting Started
+### Clone the project
 git clone https://github.com/BecayeSoft/SmartEye
+
+### Run the server
+ng serve --open
