@@ -12,7 +12,11 @@ Smart Eye is an app that uses computer vision to perform demographic segmentatio
 
 ## Getting Started
 ### Clone the project
-git clone https://github.com/BecayeSoft/SmartEye
+`git clone https://github.com/BecayeSoft/SmartEye`
 
-### Run the server
-ng serve --open
+### Run the app
+Navigate to the project <br/>
+`cd SmartEye`
+
+Launch the server <br/>
+`ng serve --open`
