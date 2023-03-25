@@ -1,3 +1,5 @@
+// See: https://medium.com/@andrewxiaoyu0/how-to-detect-labels-and-objects-using-amazon-rekognition-with-javascript-882bcfa602df
+
 import {Component} from '@angular/core';
 
 import * as AWS from 'aws-sdk'
@@ -26,53 +28,30 @@ export class AppComponent {
     faceDetails;
 
     constructor() {
-        // AWS.config.region = 'us-east-1';
-        // Initialize the Amazon Cognito credentials provider (Not recommended)
-        // AWS.config.credentials = new AWS.Credentials('access_key', 'access_key--');
-        //
+        // authenticate to AWS
+        this.initAws()
 
-        //--------------------Authenticate to Cognitio
+        // Init the Rekognition object
+        this.rekognition = new AWS.Rekognition();
+    }
 
-        // var userPool = new CognitoUserPool({
-        //     UserPoolId: 'us-east-2_5SzDO6xtv',
-        //     Region: 'us-east-2'
-        // });
-        //
-        // var authenticationDetails = new AuthenticationDetails({
-        //     Username: 'becaye',
-        //     Password: 'TheBecaye10@aws',
-        // });
-        //
-        // var cognitoUser = new CognitoUser( {
-        //     Username: 'becaye',
-        //     Pool: userPool
-        // })
+    /**
+     * Init the AWS configuration. 
+     * Set region, credentials and some optional settings.
+     * Credentials are retrieved from Cognito to access to Rekognition.
+     */
+    initAws() {
 
-        // cognitoUser.authenticateUser(authenticationDetails, {
-        //     onSuccess: result => {
-        //         // User authentication was successful
-        //         console.log('Authentication successful:', result);
-        //     },
-        //     onFailure: function(err) {
-        //         // User authentication failed
-        //         console.error('Authentication failed:', err);
-        //     }
-        // });
-
-        //--------------------
-
-        // ---------------------------  Getting credentials from cognito --------------------------------
-
-        AWS.config.region = 'us-east-2'; // Region
+        AWS.config.region = 'us-east-2';
 
         AWS.config.credentials = new CognitoIdentityCredentials({
             IdentityPoolId: 'us-east-2:cf65ff8f-d5c2-4762-bcaa-bb19b51461ea',
         });
 
-        // Optional: Log AWS SDK events in the console
+        // Log AWS SDK events in the console
         AWS.config.logger = console;
 
-        // Optional: Enable AWS SDK debugging
+        // Enable AWS SDK debugging
         // @ts-ignore
         AWS.config.debug = true;
 
@@ -83,11 +62,7 @@ export class AppComponent {
                 console.log('AWS credentials retrieved successfully:', AWS.config.credentials);
             }
         });
-
-        // Init the Rekognition object
-        this.rekognition = new AWS.Rekognition();
     }
-
 
     /**
      * Get the uploaded image and send it to the {detectObjects}
