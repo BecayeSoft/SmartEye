@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { DynamoDB } from 'aws-sdk'
 
 import { Customer } from '../models/Customer'
-import { AWSService } from './aws.service';
+
+import  {v4 as uuidv4 } from 'uuid'
 
 /**
- * This is a service that handles all the operations to DynamoDB.
+ * `DynamoDBService` allows interactions with DynamoDB.
  */
 @Injectable({
     providedIn: 'root'
@@ -13,17 +14,21 @@ import { AWSService } from './aws.service';
 export class DynamoDBService {
 
     // the DynamoDB service object
-    dynamodb: DynamoDB;
+    dynamodb: DynamoDB
 
 
     /**
      * Constructor
      */
-    constructor(private awsService: AWSService) {
-        this.awsService.initAWS()
+    constructor() {
         this.dynamodb = new DynamoDB()
         this.createTable()
     }
+
+
+    //-----------------------------------------
+    // Create table
+    //----------------------------------------
 
     /**
      * Creates a DynamoDB table.
@@ -37,7 +42,7 @@ export class DynamoDBService {
             "TableName": "customer-demographics",
             "AttributeDefinitions": [
                 {
-                    "AttributeName": "customer-id",
+                    "AttributeName": "id",
                     "AttributeType": "S"
                 },
                 {
@@ -59,27 +64,11 @@ export class DynamoDBService {
             ],
             "KeySchema": [
                 {
-                    "AttributeName": "customer-id",
+                    "AttributeName": "id",
                     "KeyType": "HASH"
                 }
             ],
             "GlobalSecondaryIndexes": [
-                {
-                    "IndexName": "CustomerIdIndex",
-                    "KeySchema": [
-                        {
-                            "AttributeName": "customer-id",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "Projection": {
-                        "ProjectionType": "KEYS_ONLY"
-                    },
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 1,
-                        "WriteCapacityUnits": 1
-                    }
-                },
                 {
                     "IndexName": "AgeIndex",
                     "KeySchema": [
@@ -169,11 +158,18 @@ export class DynamoDBService {
         });
     }
 
+
+
+    // ------------------------------
+    // CRUD Operations
+    //-------------------------------
+
     /**
      * Add new customer to the database
+     * 
      * Note: Even though `age` is `number`, it is converted to `string`
      * because `string` is the expected type in the parameters.
-     * `smile` is converted from boolean to number first.
+     * `smile` is converted from boolean to number, then converted to string.
      * 
      * @param customer 
      * @returns a boolean that is true if the customer has been added successfully.
@@ -182,6 +178,7 @@ export class DynamoDBService {
         let params = {
             TableName: 'customer-demographics',
             Item: {
+                'id': { S: this.generateCustomerID() },
                 'age': { N: customer.age.toString() },
                 'gender': { S: customer.gender },
                 'emotion': { S: customer.emotion },
@@ -202,6 +199,7 @@ export class DynamoDBService {
 
         return isSuccess
     }
+
 
     /**
      * Get all customer form customer-demographics table
@@ -371,6 +369,19 @@ export class DynamoDBService {
         return customers
     }
 
+
+    //-----------------------------------
+    //        Util Function
+    //-----------------------------------
+
+    /**
+     * Generate a unique customer ID for DynamoDB.
+     * DynamoDB does not support auto-generated IDs.
+     * @returns a unique generated ID
+     */
+    generateCustomerID() {
+        return uuidv4()
+    }
 
 }
 

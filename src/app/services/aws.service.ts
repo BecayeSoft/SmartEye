@@ -1,16 +1,24 @@
 import { Injectable } from '@angular/core';
 
-import { config, CognitoIdentityCredentials, Rekognition } from 'aws-sdk'
+import { config, CognitoIdentityCredentials } from 'aws-sdk'
 
+/**
+ * `AWSService` initializes the AWS configuration such as region, credentials
+ * to access AWS ressources. 
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class AWSService {
+    
 
-	rekognition: any;
-
-
-    constructor() {}
+    /**
+     * Constructor
+     * Initialize the AWS configuration.
+     */
+    constructor() {
+        this.initAWS()
+    }
 
     /**
      * Init the AWS configuration. 
@@ -39,13 +47,6 @@ export class AWSService {
                 console.log('AWS credentials retrieved successfully:', config.credentials);
             }
         });
-    }
-
-    /**
-     * Initializes the rekognition object
-     */
-    initRekognition() {
-        this.rekognition = new Rekognition()
     }
 
 }

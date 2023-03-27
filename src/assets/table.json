@@ -2,7 +2,7 @@
     "TableName": "customer-demographics",
     "AttributeDefinitions": [
         {
-            "AttributeName": "customer-id",
+            "AttributeName": "id",
             "AttributeType": "S"
         },
         {
@@ -24,27 +24,11 @@
     ],
     "KeySchema": [
         {
-            "AttributeName": "customer-id",
+            "AttributeName": "id",
             "KeyType": "HASH"
         }
     ],
     "GlobalSecondaryIndexes": [
-        {
-            "IndexName": "CustomerIdIndex",
-            "KeySchema": [
-                {
-                    "AttributeName": "customer-id",
-                    "KeyType": "HASH"
-                }
-            ],
-            "Projection": {
-                "ProjectionType": "KEYS_ONLY"
-            },
-            "ProvisionedThroughput": {
-                "ReadCapacityUnits": 1,
-                "WriteCapacityUnits": 1
-            }
-        },
         {
             "IndexName": "AgeIndex",
             "KeySchema": [

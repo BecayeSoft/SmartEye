@@ -9,10 +9,9 @@ export class ProcessData {
     static extractAge(faceDetails) {
         const ageLow = faceDetails.AgeRange.Low
         const ageHigh = faceDetails.AgeRange.High
+        const estimatedAge = (ageHigh + ageLow) / 2
 
-        const estimatedAge = Math.round(ageHigh + ageLow / 2)
-
-        return estimatedAge
+        return Math.round(estimatedAge)
     }
 
     /**

@@ -20,16 +20,9 @@ export class HomeComponent implements OnInit {
     faceDetails: any;
 	
 	
-	constructor (
-        private awsService: AWSService,
-        private dynamodbService: DynamoDBService
-        ) {
-    }
+	constructor (private dynamodbService: DynamoDBService) {}
 
-    ngOnInit(): void {
-        // authenticate to AWS
-        this.awsService.initAWS()
-    }
+    ngOnInit(): void {}
 
     getAllCustomers() {
         this.customers = this.dynamodbService.getAllCustomers();

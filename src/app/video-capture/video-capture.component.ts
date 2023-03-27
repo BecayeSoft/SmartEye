@@ -1,13 +1,12 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-
-import { AWSService } from '../services/aws.service';
-import { DynamoDBService } from '../services/dynamo-db.service';
-import { Rekognition } from 'aws-sdk'
-
 import { Buffer } from 'buffer';
+
+import { DynamoDBService } from '../services/dynamo-db.service';
+import { RekognitionService } from '../services/rekognition.service';
 
 import { ProcessData } from './../utils/process-data'
 import { Customer } from '../models/Customer';
+
 
 // OpenCV
 declare var cv: any;
@@ -25,31 +24,22 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
     // TODO list
     // Next step: Take picture only when there is a face using Viola Jones in OpenCV
     // 2 Faces: Detect the attributes of all the faces instead.
- 
-    rekognition: Rekognition
+
+    // rekognition: Rekognition
     faceDetails: any;
 
 
     constructor(
-        private awsService: AWSService,
+        private rekognitionService: RekognitionService,
         private dynamodbService: DynamoDBService
-    ) {
+    ) {}
 
-    }
-
-    ngOnInit(): void {
-        // authenticate to AWS
-        this.awsService.initAWS()
-
-        // Init and retrieve the Rekognition object
-        this.awsService.initRekognition()
-        this.rekognition = this.awsService.rekognition
-    }
+    ngOnInit(): void {}
 
     ngAfterViewInit(): void {
         // take customer's picture and detect face's labels
-        setTimeout( () => {
-            // this.captureImage()
+        setTimeout(() => {
+            this.captureImage()
         }, 3000)
     }
 
@@ -72,8 +62,8 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
                 console.log("Error getting video stream: " + error);
             });
 
-    // TODO - Next step: Take picture only when there is a face using Viola Jones in OpenCV
-        
+        // TODO - Next step: Take picture only when there is a face using Viola Jones in OpenCV
+
         // wait for video to be loaded
         videoElement.addEventListener("loadeddata", () => {
             let canvas = <HTMLCanvasElement>document.getElementById("canvas");
@@ -91,51 +81,25 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
 
     }
 
-    /**
-     * Convert the canvas's image into a buffer.
-     * 
-     * We do so becasue AWS Rekogniton only accepts certains types.
-     * `canvas.toDataURL()` converts the image to a base64 encoded string,
-     * `Buffer.from()` converts that image to `Bytes`.
-     */
-    processImage(canvas) {
-        const imageDataUrl = canvas.toDataURL();
-        const imageBuffer = Buffer.from(imageDataUrl.split(',')[1], 'base64')
 
-        return imageBuffer
-    }
-
-    // TODO: Detect all the faces instead of one.
     /**
-     * Detect faces attributes of the customer in the image using AWS Rekognition.
-     * We are only interest in 1 face, hence the `data.FaceDetails[0]`
+     * Detect faces attributes of the customer in the image.
      * 
      * If the operation succeeds `addCustomerToDatabase()` is called
      * to save the data into DynamoDB.
      */
-    detectFaces(imgData) {
-        const params = {
-            Image: {
-                Bytes: imgData
-            },
-            Attributes: [
-                'ALL',
-            ],
-        };
-
-        this.rekognition.detectFaces(params, (err, data) => {
-            if (err) {
-                console.log(err, err.stack);
-                alert('There was an error detecting the labels in the image provided. Check the console for more details.');
-            } else {
+    detectFaces(imageData) { 
+        this.rekognitionService.detectFaces(imageData)
+            .then(data => {
                 this.faceDetails = data.FaceDetails[0]
-                console.log('1st face deteced:', this.faceDetails);
-                
+                console.log('Faces detected:', data.FaceDetails)
+
                 // save the customer to DynamoDB
                 this.addCustomerToDatabase(this.faceDetails)
-            }
-        });
-
+            })
+            .catch(err => {
+                console.log('Error detecting faces:', err);
+            })
     }
 
     /**
@@ -153,13 +117,18 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
         const gender = ProcessData.extractGender(faceDetails)
         const emotion = ProcessData.extractEmotion(faceDetails)
         const smile = ProcessData.extractSmile(faceDetails)
-        let customer = new Customer(age, gender, emotion, smile) 
+        
+        let customer = new Customer()
+        customer.age = age
+        customer.gender = gender
+        customer.emotion = emotion
+        customer.smile = smile
 
         return customer
     }
 
     /**
-     * Save a customer to DynamoDB.
+     * Save a customer to the table `customer-demographics` in DynamoDB.
      * 
      * the JSON string `faceDetails` is first processed with `processCustomerData()`
      * so that it can be added to the database.
@@ -168,14 +137,28 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
      */
     addCustomerToDatabase(faceDetails) {
         let customer = this.processCustomerData(faceDetails)
-        let isSuccessful = this.dynamodbService.addCustomer(customer)
+        console.log('Process Customer Data>', customer);
         
-        if (isSuccessful) {
-            // TODO something
-        }
-        else {
-            // TODO nothing
-        }
+        this.dynamodbService.addCustomer(customer)
+    }
+
+
+    //----------------------------------
+    //      Utils Functions
+    //----------------------------------
+
+    /**
+     * Convert the canvas's image into a buffer.
+     * 
+     * We do so becasue AWS Rekogniton only accepts certains types.
+     * `canvas.toDataURL()` converts the image to a base64 encoded string,
+     * `Buffer.from()` converts that image to `Bytes`.
+     */
+    processImage(canvas) {
+        const imageDataUrl = canvas.toDataURL();
+        const imageBuffer = Buffer.from(imageDataUrl.split(',')[1], 'base64')
+
+        return imageBuffer
     }
 
 }

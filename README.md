@@ -27,5 +27,5 @@ Launch the server <br/>
 <a href="https://docs.opencv.org/3.4/d0/d84/tutorial_js_usage.html">OpenCV</a>
 
 ### DynamoDB
-Create the table with the CLI.
+Create the table with AWS CLI.
 `aws dynamodb create-table --cli-input-json file://src/assets/table.json`

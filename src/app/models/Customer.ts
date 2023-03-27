@@ -1,14 +1,14 @@
 export class Customer {
-    private _age: number
-    private _emotion: string
-    private _gender: string
-    private _smile: boolean
+    private _age: number = -1
+    private _emotion: string = 'NA'
+    private _gender: string = 'NA'
+    private _smile: boolean = false
 
 
-    constructor(age: number, emotion: string, gender: string, smile: boolean) {
+    constructor(age?: number, gender?: string, emotion?: string, smile?: boolean) {
         this._age = age
-        this._emotion = emotion
         this._gender = gender
+        this._emotion = emotion
         this._smile = smile
     }
 
