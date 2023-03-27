@@ -3,16 +3,26 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { VideoCaptureComponent } from './video-capture/video-capture.component';
+import { HomeComponent } from './home/home.component';
+import { AWSService } from './services/aws.service';
+import { DynamoDBService } from './services/dynamo-db.service';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    VideoCaptureComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    AWSService,
+    DynamoDBService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

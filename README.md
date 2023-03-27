@@ -20,3 +20,12 @@ Navigate to the project <br/>
 
 Launch the server <br/>
 `ng serve --open`
+
+### References
+<a href=https://docs.aws.amazon.com/rekognition/index.html">AWS Rekognition</a>
+<a href="https://medium.com/@andrewxiaoyu0/how-to-detect-labels-and-objects-using-amazon-rekognition-with-javascript-882bcfa602df"></a>
+<a href="https://docs.opencv.org/3.4/d0/d84/tutorial_js_usage.html">OpenCV</a>
+
+### DynamoDB
+Create the table with the CLI.
+`aws dynamodb create-table --cli-input-json file://src/assets/table.json`

@@ -1,38 +1,82 @@
-// See: https://medium.com/@andrewxiaoyu0/how-to-detect-labels-and-objects-using-amazon-rekognition-with-javascript-882bcfa602df
-
-import {Component} from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import * as AWS from 'aws-sdk'
-import {CognitoIdentityCredentials} from 'aws-sdk'
+import { CognitoIdentityCredentials } from 'aws-sdk'
+import { Buffer } from 'buffer';
 
-// Authenticate
-import {
-    AuthenticationDetails,
-    CognitoUserPool,
-    CognitoUserAttribute,
-    CognitoUser
-} from 'amazon-cognito-identity-js-typescript/src'
+declare var cv: any;
+
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-    title = 'frontend';
+export class AppComponent implements OnInit, AfterViewInit {
+    title = 'Smart Eye';
 
     rekognition: any;
     selectedLabel = 'Person'   // label to show bounding boxes for
 
     // faces details
-    faceDetails;
+    faceDetails: any;
 
-    constructor() {
+
+    constructor() { }
+
+    ngOnInit(): void {
         // authenticate to AWS
-        this.initAws()
+        // this.initAws()
 
         // Init the Rekognition object
-        this.rekognition = new AWS.Rekognition();
+        // this.rekognition = new AWS.Rekognition();
+    }
+
+    ngAfterViewInit(): void {
+        // setTimeout(() => {
+        // this.captureImage()
+        // }, 3000)
+    }
+
+    captureImage() {
+        
+        let videoElement = document.getElementById("videoElement") as HTMLVideoElement;
+
+        // connect to webcam
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => {
+                videoElement.srcObject = stream;
+                // start webcam
+                videoElement.play();
+            })
+            .catch(function (error) {
+                console.log("Error getting video stream: " + error);
+            });
+
+        // wait for video to be loaded
+        videoElement.addEventListener("loadeddata", () => {
+            let canvas = <HTMLCanvasElement>document.getElementById("canvas");
+            let context = canvas.getContext("2d");
+
+            // Set interval to capture and process frames
+            // setInterval( () => {
+
+                // draw video frame onto canvas
+                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                // read canvas image as Mat object
+                let image = cv.imread(canvas);
+
+                // convert canvas image to buffer for Rekognition
+                const imageDataUrl = canvas.toDataURL();
+                const imageBuffer = Buffer.from(imageDataUrl.split(',')[1], 'base64')
+
+                // send buffer to rekognition
+                this.detectFaces(imageBuffer)
+
+            // }, 5000);
+        });
+
     }
 
     /**
@@ -81,6 +125,7 @@ export class AppComponent {
             reader.onload = ((file: any) => {
                 return (e: any) => {
                     this.detectFaces(e.target.result);
+                    
                 }
             })(file);
 
@@ -91,8 +136,7 @@ export class AppComponent {
     /**
      * Detect Faces
      * Uses Rekognition to label the person's faces in the image.
-     * Note that we use singular.
-     * This is because, the software will get images from the cashier's cameras,
+     * We get images from the cashier's cameras,
      * which takes the photo of the customer currently at the checkout.
      */
     detectFaces(imgData) {
@@ -138,7 +182,7 @@ export class AppComponent {
         const filtered = objData.Labels.filter(obj => this.selectedLabel === obj.Name);
         const boxes = filtered.length > 0 ? filtered[0].Instances : [];
 
-        const blob = new Blob([imgData], {type: 'image/jpg'});
+        const blob = new Blob([imgData], { type: 'image/jpg' });
         const imageUrl = URL.createObjectURL(blob);
 
         const img = new Image();

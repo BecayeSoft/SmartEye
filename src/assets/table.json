@@ -1,0 +1,117 @@
+{
+    "TableName": "customer-demographics",
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "customer-id",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "age",
+            "AttributeType": "N"
+        },
+        {
+            "AttributeName": "gender",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "emotion",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "smile",
+            "AttributeType": "N"
+        }
+    ],
+    "KeySchema": [
+        {
+            "AttributeName": "customer-id",
+            "KeyType": "HASH"
+        }
+    ],
+    "GlobalSecondaryIndexes": [
+        {
+            "IndexName": "CustomerIdIndex",
+            "KeySchema": [
+                {
+                    "AttributeName": "customer-id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "KEYS_ONLY"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        },
+        {
+            "IndexName": "AgeIndex",
+            "KeySchema": [
+                {
+                    "AttributeName": "age",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        },
+        {
+            "IndexName": "GenderIndex",
+            "KeySchema": [
+                {
+                    "AttributeName": "gender",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        },
+        {
+            "IndexName": "EmotionIndex",
+            "KeySchema": [
+                {
+                    "AttributeName": "emotion",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        },
+        {
+            "IndexName": "SmileIndex",
+            "KeySchema": [
+                {
+                    "AttributeName": "smile",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+    }
+}
