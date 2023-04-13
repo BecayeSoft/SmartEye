@@ -1,7 +1,221 @@
-<p>home works!</p>
+<!-- <h1>home works!</h1>
 <div *ngFor="let customer of customers">
-    <p>{{customer.age}}</p>
-    <p>{{customer.gender}}</p>
-    <p>{{customer.emotion}}</p>
-    <p>{{customer.smile}}</p>
+    <h4>{{customer.id.S}}</h4>
+    <p>{{customer.age.N}}</p>
+    <p>{{customer.gender.S}}</p>
+    <p>{{customer.emotion.S}}</p>
+    <p>{{customer.smile.N}}</p>
+</div> -->
+<!-- <div class="bg-gray-100 max-w-4xl m-auto ">
+
+    <h2 class="text-3xl text-red-800 mb-5">Démographie des clients</h2>
+    <div class="grid grid-cols-2 gap-8 max-w-xl"> -->
+
+
+<!--  Gender -->
+<!-- <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/female.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.female }}</span>
+            Femmes
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/male.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.male }}</span>
+            Hommes
+        </div>
+
+    </div> -->
+
+<!-- <div class="grid grid-cols-3 gap-4 text-xl mt-4"> -->
+
+<!-- Emotions  -->
+<!-- <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/happy.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.happy }}</span>
+            Heureu(x)
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/sad.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.sad }}</span>
+            Triste(s)
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/angry.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.angry }}</span>
+            En colère
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/fear.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.fear }}</span>
+            Effrayé(s)
+        </div>
+
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/confused.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.confused }}</span>
+            Confu(s)
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/suprised.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.surprised }}</span>
+            Surpri(s)
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/disgusted.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.disgusted }}</span>
+            Dégoutés(s)
+        </div>
+        <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/calm.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.calm }}</span>
+            Calme(s)
+        </div> -->
+
+<!-- Smile -->
+<!-- <div class="bg-white rounded-sm shadow p-4 flex items-center h-24 w-72">
+            <img src="../../assets/icons/smile.png" class="mr-8 w-12" />
+            <span class="text-3xl text-rose-700 mr-2">{{ customersMetrics.smile }}</span>
+            Souriant(s)
+        </div>
+
+    </div>
+
+
 </div>
+ -->
+
+
+
+
+
+
+
+
+
+<div class="mx-auto bg-gray-50 h-screen">
+
+    <div class="bg-white rounded-lg shadow-md w-3/4 m-auto">
+
+        <!-- Menu -->
+        <div class="flex items-center justify-between p-4 mb-4 text-xl shadow rounded">
+            <ul class="flex">
+                <li class="mr-6">
+                    <a routerLink="/home" class="text-gray-700 font-medium hover:text-gray-900">Accueil</a>
+                </li>
+                <li>
+                    <a routerLink="/capture" class="text-gray-700 font-medium hover:text-gray-900">Camera</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="p-8 pt-0">
+
+
+            <!-- Header -->
+            <div class="flex items-center justify-between my-8">
+                <div class="flex items-center">
+                    <img src="../../assets/icons/logo.png" alt="Logo" class="h-20 mr-4">
+                    <h1 class="text-4xl font-bold text-gray-800">Smart Eye</h1>
+                </div>
+                <div class="text-gray-500 text-md">
+                    {{ currentDate | date: 'fullDate' }}
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-semibold mb-4">Tableau de bord</h2>
+
+            <!-- Charts -->
+            <div class="flex justify-between">
+                <div id="gender-chart" style="height:350px; width: 600px;"></div>
+                <div id="age-chart" style="height:350px; width: 600px;"></div>
+            </div>
+
+
+            <!-- Emotions -->
+            <div class="mt-8 grid grid-cols-3 gap-8">
+
+                <!-- Positive emotions  -->
+
+                <!-- <div class="bg-green-100 p-4 rounded-lg flex items-center justify-between">
+                    <div>
+                        <h2 class="text-green-600 text-xl font-semibold mb-2">Heureux</h2>
+                        <p class="text-green-500 text-lg font-medium">{{ customersMetrics.happy }}</p>
+                    </div>
+                    <img src="../../assets/icons/happy.png" class="mr-8 w-8 h-8" />
+                </div> -->
+
+                <div class="bg-green-100 p-4 rounded-lg border">
+                    <h2 class="text-green-600 text-xl font-semibold mb-2">Heureux</h2>
+                    <p class="text-green-500 text-lg font-medium">{{ customersMetrics.happy }}</p>
+                </div>
+
+                <div class="bg-green-100 p-4 rounded-lg border">
+                    <h2 class="text-green-600 text-xl font-semibold mb-2">Souriant</h2>
+                    <p class="text-green-500 text-lg font-medium">{{ customersMetrics.smile }}</p>
+                </div>
+
+                <div class="bg-green-100 p-4 rounded-lg border">
+                    <h2 class="text-green-600 text-xl font-semibold mb-2">Calme</h2>
+                    <p class="text-green-500 text-lg font-medium">{{ customersMetrics.calm }}</p>
+                </div>
+
+                <!-- Negative emotions -->
+
+                <div class="bg-red-100 p-4 rounded-lg border">
+                    <h2 class="text-red-600 text-xl font-semibold mb-2">En colère</h2>
+                    <p class="text-red-500 text-lg font-medium">{{ customersMetrics.angry }}</p>
+                </div>
+
+                <div class="bg-rose-100 p-4 rounded-lg border">
+                    <h2 class="text-rose-600 text-xl font-semibold mb-2">Triste</h2>
+                    <p class="text-rose-500 text-lg font-medium">{{ customersMetrics.sad }}</p>
+                </div>
+
+                <div class="bg-rose-100 p-4 rounded-lg border">
+                    <h2 class="text-rose-600 text-xl font-semibold mb-2">Dégouté</h2>
+                    <p class="text-rose-500 text-lg font-medium">{{ customersMetrics.disgusted }}</p>
+                </div>
+
+                <!-- Other Emotions -->
+                <div class="bg-yellow-100 p-4 rounded-lg border">
+                    <h2 class="text-yellow-600 text-xl font-semibold mb-2">Confus</h2>
+                    <p class="text-yellow-500 text-lg font-medium">{{ customersMetrics.confused }}</p>
+                </div>
+
+                <div class="bg-yellow-100 p-4 rounded-lg border">
+                    <h2 class="text-yellow-600 text-xl font-semibold mb-2">Surpris</h2>
+                    <p class="text-yellow-500 text-lg font-medium">{{ customersMetrics.surprised }}</p>
+                </div>
+
+                <div class="bg-yellow-100 p-4 rounded-lg border">
+                    <h2 class="text-yellow-600 text-xl font-semibold mb-2">Effrayé</h2>
+                    <p class="text-yellow-500 text-lg font-medium">{{ customersMetrics.fear }}</p>
+                </div>
+
+            </div>
+
+
+            <!-- Gender -->
+            <!-- <canvas id="chart" width="400" height="200"></canvas> -->
+            <!-- <div id="chart_div" style="width: 600px;"></div> -->
+
+
+
+
+            <!-- <div id="age-histogram-div" style="width: 500px; height: 500px;"></div> -->
+
+            <!-- <div id="age-bar-div" style="width: 500px; height: 500px;"></div> -->
+
+            <!-- <google-chart [options]="chartOptions" [height]="400" [width]="600" [type]="columnChart" [data]="genderData" [columns]="genderColumns"></google-chart> -->
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- <canvas id="myChart" width="400" height="400"></canvas>
+ <div class="chart-container">
+    <canvas  id="MyChart" >{{ chart }}</canvas>
+</div> -->

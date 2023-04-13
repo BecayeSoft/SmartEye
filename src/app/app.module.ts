@@ -8,6 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { AWSService } from './services/aws.service';
 import { DynamoDBService } from './services/dynamo-db.service';
 import { RekognitionService } from './services/rekognition.service';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { RekognitionService } from './services/rekognition.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    GoogleChartsModule,
   ],
   providers: [
     AWSService,

@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { DynamoDB } from 'aws-sdk'
 
 import { Customer } from '../models/Customer'
+import { Emotion } from '../models/emotions';
 
 import  {v4 as uuidv4 } from 'uuid'
+
 
 /**
  * `DynamoDBService` allows interactions with DynamoDB.
@@ -15,6 +17,7 @@ export class DynamoDBService {
 
     // the DynamoDB service object
     dynamodb: DynamoDB
+    TABLE_NAME = "customer-demographics"
 
 
     /**
@@ -22,7 +25,7 @@ export class DynamoDBService {
      */
     constructor() {
         this.dynamodb = new DynamoDB()
-        this.createTable()
+        // this.createTable()
     }
 
 
@@ -39,7 +42,7 @@ export class DynamoDBService {
         // read/write capaacity units
         const units = 1
         let params = {
-            "TableName": "customer-demographics",
+            "TableName": this.TABLE_NAME,
             "AttributeDefinitions": [
                 {
                     "AttributeName": "id",
@@ -176,7 +179,7 @@ export class DynamoDBService {
      */
     addCustomer(customer: Customer) {
         let params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             Item: {
                 'id': { S: this.generateCustomerID() },
                 'age': { N: customer.age.toString() },
@@ -203,25 +206,16 @@ export class DynamoDBService {
 
     /**
      * Get all customer form customer-demographics table
+     * 
+     * @returns a promise that contains a list of all customers
      */
-    getAllCustomers() {
-        let customers: any
-
+    getAllCustomers(): Promise<any> {
         const params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
         };
 
-        // Call the Scan operation to get all customers
-        this.dynamodb.scan(params, (err, data) => {
-            if (err) {
-                console.error('Unable to scan the table:', JSON.stringify(err, null, 2));
-            } else {
-                customers = JSON.stringify(data.Items, null, 2)
-                console.log('Customers:', JSON.stringify(data.Items, null, 2));
-            }
-        })
-
-        return customers
+        // get all customers
+        return this.dynamodb.scan(params).promise()
     }
 
     /**
@@ -229,7 +223,7 @@ export class DynamoDBService {
      */
     getCustomerByID(id: string) {
         var params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             Key: {
                 'customer-id': { S: id }
             }
@@ -249,12 +243,23 @@ export class DynamoDBService {
         return customer
     }
 
+    
+    //-------------------------------------------------------------------------------------
+    //       Filtering Methods
+    // The following methods should not be used unless necessary.
+    // It is likely that we have already retrieved all the customers data first.
+    // So we could just filter the `customers` array to get customers by age, gender, etc. 
+    //-------------------------------------------------------------------------------------
+
     /**
-     * Get cutomers by age
+     * Get cutomers by age.
+     * 
+     * Warning: Prefer filtering the `customers` array whenever possible
+     * to get customers by age.
      */
     getCustomersByAge(age: number) {
         const params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             IndexName: 'AgeIndex',
             KeyConditionExpression: '#age = :age',
             ExpressionAttributeNames: {
@@ -280,11 +285,17 @@ export class DynamoDBService {
     }
 
     /**
-     * Get cutomers by gender
+     * Get cutomers by gender.
+     * 
+     * Warning: Prefer filtering the `customers` array whenever possible
+     * to get customers by gender.
+     * 
+     * @param gender: either 'Male' or 'Female'
+     * @returns an array of all the male customers
      */
-    getCustomersByGender(gender: string) {
+    getCustomersByGender(gender: 'Male' | 'Female') {
         const params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             IndexName: 'GenderIndex',
             KeyConditionExpression: '#gender = :gender',
             ExpressionAttributeNames: {
@@ -295,7 +306,7 @@ export class DynamoDBService {
             },
         }
 
-        let customers: any
+        let customers: any[]
 
         this.dynamodb.query(params, (err, data) => {
             if (err) {
@@ -310,11 +321,15 @@ export class DynamoDBService {
     }
 
     /**
-     * Get cutomers by emotions
+     * Get cutomers by emotions.
+     * 
+     * Warning: Prefer filtering the `customers` array whenever possible
+     * to get customers by emotions.
      */
-    getCustomersByEmotion(emotion: string) {
+    getCustomersByEmotion(emotion: Emotion) {
+
         const params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             IndexName: 'EmotionIndex',
             KeyConditionExpression: '#emotion = :emotion',
             ExpressionAttributeNames: {
@@ -340,11 +355,14 @@ export class DynamoDBService {
     }
 
     /**
-     * Get smiling cutomers
+     * Get smiling cutomers.
+     * 
+     * Warning: Prefer filtering the `customers` array whenever possible
+     * to get customers who smile.
      */
     getSmilingCustomers(smile: boolean) {
         const params = {
-            TableName: 'customer-demographics',
+            TableName: this.TABLE_NAME,
             IndexName: 'SmileIndex',
             KeyConditionExpression: '#smile = :smile',
             ExpressionAttributeNames: {
@@ -367,6 +385,19 @@ export class DynamoDBService {
         })
 
         return customers
+    }
+
+    /**
+     * Get the table information. 
+     * 
+     * This method is used to get the number of customers in the table.
+     * Use a then/catch block to get a `response` and 
+     * get the items count with `response.Table.ItemCount`
+     * 
+     * @returns a promise that contains the table's information.
+     */
+    getTableInfo() {
+        return this.dynamodb.describeTable({ TableName: this.TABLE_NAME }).promise()
     }
 
 
