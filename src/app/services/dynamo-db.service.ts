@@ -18,6 +18,111 @@ export class DynamoDBService {
     // the DynamoDB service object
     dynamodb: DynamoDB
     TABLE_NAME = "customer-demographics"
+    params = {
+        "TableName": this.TABLE_NAME,
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "id",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "age",
+                "AttributeType": "N"
+            },
+            {
+                "AttributeName": "gender",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "emotion",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "smile",
+                "AttributeType": "N"
+            },
+            {
+                "AttributeName": "timestamp",
+                "AttributeType": "N"
+            }     
+        ],
+        "KeySchema": [
+            {
+                "AttributeName": "id",
+                "KeyType": "HASH"
+            }
+        ],
+        "GlobalSecondaryIndexes": [
+            {
+                "IndexName": "AgeIndex",
+                "KeySchema": [
+                    {
+                        "AttributeName": "age",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "Projection": {
+                    "ProjectionType": "ALL"
+                },
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            },
+            {
+                "IndexName": "GenderIndex",
+                "KeySchema": [
+                    {
+                        "AttributeName": "gender",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "Projection": {
+                    "ProjectionType": "ALL"
+                },
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            },
+            {
+                "IndexName": "EmotionIndex",
+                "KeySchema": [
+                    {
+                        "AttributeName": "emotion",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "Projection": {
+                    "ProjectionType": "ALL"
+                },
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            },
+            {
+                "IndexName": "SmileIndex",
+                "KeySchema": [
+                    {
+                        "AttributeName": "smile",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "Projection": {
+                    "ProjectionType": "ALL"
+                },
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    }
 
 
     /**
@@ -25,7 +130,7 @@ export class DynamoDBService {
      */
     constructor() {
         this.dynamodb = new DynamoDB()
-        // this.createTable()
+        // this.createTable(this.params)
     }
 
 
@@ -38,111 +143,10 @@ export class DynamoDBService {
      * This method should only create a table the first time the app is launched.
      * Next time, suppossing the table has already been created, it won't do anything.
      */
-    createTable() {
+    createTable(params) {
         // read/write capaacity units
         const units = 1
-        let params = {
-            "TableName": this.TABLE_NAME,
-            "AttributeDefinitions": [
-                {
-                    "AttributeName": "id",
-                    "AttributeType": "S"
-                },
-                {
-                    "AttributeName": "age",
-                    "AttributeType": "N"
-                },
-                {
-                    "AttributeName": "gender",
-                    "AttributeType": "S"
-                },
-                {
-                    "AttributeName": "emotion",
-                    "AttributeType": "S"
-                },
-                {
-                    "AttributeName": "smile",
-                    "AttributeType": "N"
-                }
-            ],
-            "KeySchema": [
-                {
-                    "AttributeName": "id",
-                    "KeyType": "HASH"
-                }
-            ],
-            "GlobalSecondaryIndexes": [
-                {
-                    "IndexName": "AgeIndex",
-                    "KeySchema": [
-                        {
-                            "AttributeName": "age",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "Projection": {
-                        "ProjectionType": "ALL"
-                    },
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 1,
-                        "WriteCapacityUnits": 1
-                    }
-                },
-                {
-                    "IndexName": "GenderIndex",
-                    "KeySchema": [
-                        {
-                            "AttributeName": "gender",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "Projection": {
-                        "ProjectionType": "ALL"
-                    },
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 1,
-                        "WriteCapacityUnits": 1
-                    }
-                },
-                {
-                    "IndexName": "EmotionIndex",
-                    "KeySchema": [
-                        {
-                            "AttributeName": "emotion",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "Projection": {
-                        "ProjectionType": "ALL"
-                    },
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 1,
-                        "WriteCapacityUnits": 1
-                    }
-                },
-                {
-                    "IndexName": "SmileIndex",
-                    "KeySchema": [
-                        {
-                            "AttributeName": "smile",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "Projection": {
-                        "ProjectionType": "ALL"
-                    },
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 1,
-                        "WriteCapacityUnits": 1
-                    }
-                }
-            ],
-            "ProvisionedThroughput": {
-                "ReadCapacityUnits": 1,
-                "WriteCapacityUnits": 1
-            }
-        }
-    
+            
         this.dynamodb.describeTable({ TableName: params.TableName }, (err, data) => {
             if (err) {
                 console.log('Table does not exist. Creating table...');
@@ -160,7 +164,6 @@ export class DynamoDBService {
             }
         });
     }
-
 
 
     // ------------------------------
@@ -185,7 +188,8 @@ export class DynamoDBService {
                 'age': { N: customer.age.toString() },
                 'gender': { S: customer.gender },
                 'emotion': { S: customer.emotion },
-                'smile': { N: Number(customer.smile).toString() }
+                'smile': { N: Number(customer.smile).toString() },
+                'timestamp': { N: Date.now().toString() },
             }
         };
 

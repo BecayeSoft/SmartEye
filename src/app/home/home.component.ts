@@ -8,6 +8,7 @@ import { ChartType, Row } from "angular-google-charts";
 
 declare var google
 
+// TODO: https://developers.google.com/chart/interactive/docs/gallery/histogram
 
 interface CustomersMetrics {
     /**
@@ -69,7 +70,7 @@ export class HomeComponent implements OnInit {
             silentGeneration: 0, greatestGeneration: 0
         }
     }
-    
+
     currentDate = new Date()
 
     genderData = [
@@ -78,15 +79,12 @@ export class HomeComponent implements OnInit {
     ];
 
     genderColumns = ['City', 'Inhabitants'];
-    
     columnChart = ChartType.ColumnChart;
-    
     chartOptions = {
         colors: ['#e0440e', '#e6693e'],
     }
 
     public chart: any
-
     chartJS() {
         this.chart = new Chart("MyChart", {
             type: 'bar', //this denotes tha type of chart
@@ -117,42 +115,40 @@ export class HomeComponent implements OnInit {
 
     }
 
-    drawAgeChart(metrics: CustomersMetrics) {
-        metrics = {
-            male: 0, female: 0,
-            calm: 0, angry: 0, confused: 0, surprised: 0, disgusted: 0, fear: 0, sad: 0, happy: 0,
-            smile: 0,
-            ageCategory: {
-                alpha: 7, z: 8, millennials: 10, generationX: 6, babyBoomers: 10,
-                silentGeneration: 16, greatestGeneration: 2
-            }
-        }
-
-        // let gen = this.customersMetrics.ageCategory
-        let gen = metrics.ageCategory
+    drawAgeChart(ageGenerations) {
 
         let data = google.visualization.arrayToDataTable([
             ['Age', 'Value', { role: 'style' }],
-            ['Alpha (0-10)', gen.alpha, 'fill-color: #A9DDD6'],
-            ['Z (11 - 28)', gen.z, 'fill-color: #7A8B99'],
-            ['Millennials (29 - 43)', gen.millennials, 'fill-color: #91ADC2'],
-            ['Generation X (44 - 58)', gen.generationX, 'fill-color: #9BA0BC'],
-            ['Baby Boomers (59 - 77)', gen.babyBoomers, 'fill-color: #C1B8C8'],
-            ['Silent Generation (78 - 98)', gen.silentGeneration, 'fill-color: #BBBBFF'],
-            ['Greatest Gen. (99 - 122)', gen.greatestGeneration, 'fill-color: #C5A5CF'],
+            ['Alpha (0-10)', ageGenerations.alpha, 'fill-color: #A9DDD6'],
+            ['Z (11 - 28)', ageGenerations.z, 'fill-color: #7A8B99'],
+            ['Millennials (29 - 43)', ageGenerations.millennials, 'fill-color: #91ADC2'],
+            ['Generation X (44 - 58)', ageGenerations.generationX, 'fill-color: #9BA0BC'],
+            ['Baby Boomers (59 - 77)', ageGenerations.babyBoomers, 'fill-color: #C1B8C8'],
+            ['Silent Generation (78 - 98)', ageGenerations.silentGeneration, 'fill-color: #BBBBFF'],
+            ['Greatest Gen. (99 - 122)', ageGenerations.greatestGeneration, 'fill-color: #C5A5CF'],
         ])
 
         let options = {
             title: 'Generation des clients',
-            chartArea: { width: '50%' },
+            chartArea: { width: '30%' },
             hAxis: {
-                title: 'Number',
-                minValue: 0
+                title: '',
+                minValue: 0,
+                // textPosition: 'none',
+                gridlines: {
+                    color: 'transparent'
+                },
+                ticks: [0, 3, 6]
             },
             vAxis: {
-                title: ''
+                title: '',
+                // textPosition: 'none',
+                gridlines: {
+                    color: 'transparent'
+                }
             },
             legend: { position: 'none' },
+            fontSize: 20,
         }
 
         let chart = new google.visualization.BarChart(document.getElementById('age-chart'))
@@ -160,30 +156,34 @@ export class HomeComponent implements OnInit {
         chart.draw(data, options)
     }
 
-    drawAgeHistogram() {
-        let gen = this.customersMetrics.ageCategory
-        let data = google.visualization.arrayToDataTable([
-            ['Age', 'Value', { role: 'style' }],
-            ['Alpha', gen.alpha, 'fill-color: #C5A5CF'],
-            ['Z', gen.z, 'fill-color: #bbbbff'],
-            ['Millennials', gen.millennials, 'fill-color: #bbbbff'],
-            ['Generation X', gen.generationX, 'fill-color: #bbbbff'],
-            ['Baby Boomers', gen.babyBoomers, 'fill-color: #bbbbff'],
-            ['Silent Generation', gen.silentGeneration, 'fill-color: #bbbbff'],
-            ['Greatest Generation', gen.greatestGeneration, 'fill-color: #bbbbff'],
-        ]);
+    drawAgeHistogram(ages: number[]) {
 
-        var options = {
-            title: 'Customers Age',
+
+        let data = new google.visualization.DataTable();
+
+        data.addColumn('number', 'Age');
+        data.addRows(ages.map(age => [age]));       // [age] to transform into an array 
+
+        const options = {
+            title: "Distribution de l'age",
             legend: { position: 'none' },
-        };
+            // histogram: { bucketSize: 5 },
+            colors: ['#C5A5CF'],
+            dataOpacity: 0.8,
+            fontSize: 20,
+            vAxis: {
+                textPosition: 'none',
+                gridlines: {
+                    color: 'transparent'
+                }
+            },
+        }
 
         let chart = new google.visualization.Histogram(document.getElementById('age-histogram-div'));
         chart.draw(data, options);
-
     }
 
-    drawGenderChart(womenCount: number = 1, menCount: number=4) {
+    drawGenderChart(womenCount: number = 1, menCount: number = 4) {
 
         let data = google.visualization.arrayToDataTable([
             ['Gender', 'Number', { role: 'style' }],
@@ -195,13 +195,20 @@ export class HomeComponent implements OnInit {
 
         let options = {
             title: "Nombre de femmes et d'hommes",
-            chartArea: { width: '50%' },
+            // chartArea: { width: '50%' },
             hAxis: {
-                title: 'Number',
-                minValue: 0
+                title: '',
+                minValue: 0,
+                gridlines: {
+                    color: 'transparent'
+                }
             },
             vAxis: {
-                title: ''
+                title: '',
+                gridlines: {
+                    color: 'transparent'
+                },
+                ticks: [0, 3, 6, 9]
             },
             legend: { position: 'none' },
         }
@@ -216,30 +223,28 @@ export class HomeComponent implements OnInit {
     constructor(private dynamodbService: DynamoDBService) { }
 
     ngOnInit(): void {
-        // this.getAllCustomers()
+        this.getAllCustomers()
         // this.drawBasic()
         // this.chartJS()
+    }
 
+    loadGoogleCharts() {
         google.charts.load('current', { packages: ['corechart', 'bar'] })
-        
-        // google.charts.setOnLoadCallback(() => {
-        //     // Define the callback function that will be executed when Google Charts API has finished loading
-        //     const data = [['Gender', 'Count'], ['Male', 10], ['Female', 20]];
-        //     const options = { title: 'Gender Distribution' };
-        //     const drawChart = () => {
-        //       const chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-        //       chart.draw(google.visualization.arrayToDataTable(data), options);
-        //     };
-          
-        //     // Return the callback function that includes the arguments needed by drawGenderChart
-        //     return () => {
-        //       this.drawGenderChart(this.customersMetrics.female, this.customersMetrics.male);
-        //     };
-        //   });
 
-        google.charts.setOnLoadCallback(this.drawGenderChart)
-        google.charts.setOnLoadCallback(this.drawAgeChart)
-        // google.charts.setOnLoadCallback(this.drawAgeHistogram)
+        google.charts.setOnLoadCallback(() => {
+            const womenCount = this.customersMetrics.female;
+            const menCount = this.customersMetrics.male;
+            this.drawGenderChart(womenCount, menCount);
+        });
+
+        google.charts.setOnLoadCallback(() => {
+            this.drawAgeChart(this.customersMetrics.ageCategory);
+        });
+
+        google.charts.setOnLoadCallback(() => {
+            const ages = this.customers.map(customer => parseInt(customer.age.N))
+            this.drawAgeHistogram(ages);
+        });
     }
 
     /**
@@ -250,8 +255,8 @@ export class HomeComponent implements OnInit {
             .then(data => {
                 // console.log('Customers:', JSON.stringify(data.Items, null, 2))
                 this.customers = data.Items
-                console.log('data.Items', this.customers)
                 this.getCustomersMetrics()
+                this.loadGoogleCharts()
             })
             .catch(err => {
                 console.error('An error occured when scanning the table:', err)
@@ -276,7 +281,6 @@ export class HomeComponent implements OnInit {
         // this.customersMetrics.womenCount = females.length
 
         // men & women count
-        console.log('GetMetrics()->Customers', this.customers)
 
         let female = this.customers.filter((customer) => {
             return customer.gender.S === 'Female'
@@ -333,8 +337,6 @@ export class HomeComponent implements OnInit {
             return customer.emotion && customer.smile.N === '1'
         })
         this.customersMetrics.smile = smilingCustomers.length
-
-        console.log('GetMetrics()->CustomersMetrics', this.customersMetrics)
 
         // grouping customer age into intervals
         this.customers.forEach(customer => {

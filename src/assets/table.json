@@ -20,6 +20,10 @@
         {
             "AttributeName": "smile",
             "AttributeType": "N"
+        },
+        {
+            "AttributeName": "timestamp",
+            "AttributeType": "N"
         }
     ],
     "KeySchema": [
