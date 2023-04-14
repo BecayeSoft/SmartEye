@@ -4,7 +4,7 @@ import { Rekognition } from 'aws-sdk'
 
 
 /**
- * `RekognitionService` handles the interaction with AWS rekognition.
+ * `RekognitionService` handles interactions with AWS rekognition.
  */
 @Injectable({
     providedIn: 'root'
@@ -18,7 +18,7 @@ export class RekognitionService {
      */
     faceDetails: any
 
-    constructor() { 
+    constructor() {
         this.initRekognition()
     }
 
@@ -35,7 +35,7 @@ export class RekognitionService {
     /**
      * Detect faces attributes of the customer in the image using AWS Rekognition.
      * We only keek the first face, hence the `data.FaceDetails[0]`
-     * 
+     *
      * @returns a promise that returns the `faceDetails`.
      */
     detectFaces(imgData: any): Promise<any> {

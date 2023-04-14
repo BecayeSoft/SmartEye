@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 
 import { config, CognitoIdentityCredentials } from 'aws-sdk'
+import { environment } from "../../environments/environment";
 
 /**
  * `AWSService` initializes the AWS configuration such as region, credentials
- * to access AWS ressources. 
+ * to access AWS ressources.
  */
 @Injectable({
     providedIn: 'root'
 })
 export class AWSService {
-    
+
 
     /**
      * Constructor
@@ -21,16 +22,15 @@ export class AWSService {
     }
 
     /**
-     * Init the AWS configuration. 
+     * Init the AWS configuration.
      * Set region, credentials and some optional settings.
      * Credentials are retrieved from Cognito to access to Rekognition.
      */
     initAWS() {
-
-        config.region = 'us-east-2';
+        config.region = environment.region;
 
         config.credentials = new CognitoIdentityCredentials({
-            IdentityPoolId: 'us-east-2:cf65ff8f-d5c2-4762-bcaa-bb19b51461ea',
+            IdentityPoolId: environment.identityPoolId,
         });
 
         // Log AWS SDK events in the console

@@ -42,3 +42,7 @@ testem.log
 Thumbs.db
 
 Echarpe.jpg
+
+environment
+
+src/environments/
