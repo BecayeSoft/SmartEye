@@ -1,6 +1,9 @@
 # Smart Eye
 An app that collect demographic data using cameras.
 
+#### TODO
+- [ ] Use birth date instead of age
+
 Warning: Collecting individuals' data may be subject to some regulations. 
 [Find the official guiline here](https://www.priv.gc.ca/en/privacy-topics/surveillance/video-surveillance-by-businesses/gl_vs_080306/).
 
