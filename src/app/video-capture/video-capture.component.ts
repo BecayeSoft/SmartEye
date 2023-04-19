@@ -12,7 +12,7 @@ import { Customer } from '../models/Customer';
 declare var cv: any;
 
 /**
- * A component that is responsible of gathering data from the camera.
+ * A component that is responsible for gathering data from the camera.
  */
 @Component({
     selector: 'app-video-capture',
@@ -44,7 +44,7 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * Connect to the camera, take a picture of a customer 
+     * Connect to the camera, take a picture of a customer
      * and send it to rekognition to detect faces attributes.
      */
     captureImage() {
@@ -84,11 +84,11 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
 
     /**
      * Detect faces attributes of the customer in the image.
-     * 
+     *
      * If the operation succeeds `addCustomerToDatabase()` is called
      * to save the data into DynamoDB.
      */
-    detectFaces(imageData) { 
+    detectFaces(imageData) {
         this.rekognitionService.detectFaces(imageData)
             .then(data => {
                 this.faceDetails = data.FaceDetails[0]
@@ -105,11 +105,11 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
     /**
      * Extract the relevant information from the faces details,
      * then create a new customer with those information.
-     * 
+     *
      * The customer can then be saved to DynamoDB.
      * Note: This method should always be called before saving a customer to the database.
-     * 
-     * @param faceDetails 
+     *
+     * @param faceDetails
      * @returns a customer created from `faceDetails`
      */
     processCustomerData(faceDetails: any) {
@@ -117,7 +117,7 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
         const gender = ProcessData.extractGender(faceDetails)
         const emotion = ProcessData.extractEmotion(faceDetails)
         const smile = ProcessData.extractSmile(faceDetails)
-        
+
         let customer = new Customer()
         customer.age = age
         customer.gender = gender
@@ -129,16 +129,16 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
 
     /**
      * Save a customer to the table `customer-demographics` in DynamoDB.
-     * 
+     *
      * the JSON string `faceDetails` is first processed with `processCustomerData()`
      * so that it can be added to the database.
-     * 
-     * @param faceDetails a JSON string containg labels of the detected face. 
+     *
+     * @param faceDetails a JSON string containg labels of the detected face.
      */
     addCustomerToDatabase(faceDetails) {
         let customer = this.processCustomerData(faceDetails)
         console.log('Process Customer Data>', customer);
-        
+
         this.dynamodbService.addCustomer(customer)
     }
 
@@ -149,7 +149,7 @@ export class VideoCaptureComponent implements OnInit, AfterViewInit {
 
     /**
      * Convert the canvas's image into a buffer.
-     * 
+     *
      * We do so becasue AWS Rekogniton only accepts certains types.
      * `canvas.toDataURL()` converts the image to a base64 encoded string,
      * `Buffer.from()` converts that image to `Bytes`.

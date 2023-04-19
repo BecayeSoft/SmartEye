@@ -19,7 +19,7 @@ We needed a short development time, and a robust model. This is why I chose the 
 * **Angular:** A Javascript front-end framework to build robust web applications.
 
 ### Results
-* Gender: Rekognition predicts the gender perfectly.
+* Genders: Rekognition predicts the gender perfectly.
 * Age: Rekognition provides an age range that is very acurate. However, the model is biaised on minority groups such as myself and may give poor age approximations.
 * Emotions: emotions are harder to interpret as they are subtle and subject to the complexity of humans.
 

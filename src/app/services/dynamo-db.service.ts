@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DynamoDB } from 'aws-sdk'
 
 import { Customer } from '../models/Customer'
-import { Emotion } from '../models/emotions';
+import { Emotion } from '../models/enums/emotion';
 
 import  {v4 as uuidv4 } from 'uuid'
 
@@ -18,112 +18,6 @@ export class DynamoDBService {
     // the DynamoDB service object
     dynamodb: DynamoDB
     TABLE_NAME = "customer-demographics"
-    params = {
-        "TableName": this.TABLE_NAME,
-        "AttributeDefinitions": [
-            {
-                "AttributeName": "id",
-                "AttributeType": "S"
-            },
-            {
-                "AttributeName": "age",
-                "AttributeType": "N"
-            },
-            {
-                "AttributeName": "gender",
-                "AttributeType": "S"
-            },
-            {
-                "AttributeName": "emotion",
-                "AttributeType": "S"
-            },
-            {
-                "AttributeName": "smile",
-                "AttributeType": "N"
-            },
-            {
-                "AttributeName": "timestamp",
-                "AttributeType": "N"
-            }     
-        ],
-        "KeySchema": [
-            {
-                "AttributeName": "id",
-                "KeyType": "HASH"
-            }
-        ],
-        "GlobalSecondaryIndexes": [
-            {
-                "IndexName": "AgeIndex",
-                "KeySchema": [
-                    {
-                        "AttributeName": "age",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "Projection": {
-                    "ProjectionType": "ALL"
-                },
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": 1,
-                    "WriteCapacityUnits": 1
-                }
-            },
-            {
-                "IndexName": "GenderIndex",
-                "KeySchema": [
-                    {
-                        "AttributeName": "gender",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "Projection": {
-                    "ProjectionType": "ALL"
-                },
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": 1,
-                    "WriteCapacityUnits": 1
-                }
-            },
-            {
-                "IndexName": "EmotionIndex",
-                "KeySchema": [
-                    {
-                        "AttributeName": "emotion",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "Projection": {
-                    "ProjectionType": "ALL"
-                },
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": 1,
-                    "WriteCapacityUnits": 1
-                }
-            },
-            {
-                "IndexName": "SmileIndex",
-                "KeySchema": [
-                    {
-                        "AttributeName": "smile",
-                        "KeyType": "HASH"
-                    }
-                ],
-                "Projection": {
-                    "ProjectionType": "ALL"
-                },
-                "ProvisionedThroughput": {
-                    "ReadCapacityUnits": 1,
-                    "WriteCapacityUnits": 1
-                }
-            }
-        ],
-        "ProvisionedThroughput": {
-            "ReadCapacityUnits": 1,
-            "WriteCapacityUnits": 1
-        }
-    }
-
 
     /**
      * Constructor
@@ -135,7 +29,7 @@ export class DynamoDBService {
 
 
     //-----------------------------------------
-    // Create table
+    // Table Operations
     //----------------------------------------
 
     /**
@@ -146,7 +40,7 @@ export class DynamoDBService {
     createTable(params) {
         // read/write capaacity units
         const units = 1
-            
+
         this.dynamodb.describeTable({ TableName: params.TableName }, (err, data) => {
             if (err) {
                 console.log('Table does not exist. Creating table...');
@@ -165,6 +59,19 @@ export class DynamoDBService {
         });
     }
 
+    /**
+     * Get the table information.
+     *
+     * This method is used to get the number of customers in the table.
+     * Use a then/catch block to get a `response` and
+     * get the items count with `response.Table.ItemCount`
+     *
+     * @returns a promise that contains the table's information.
+     */
+    getTableInfo() {
+        return this.dynamodb.describeTable({ TableName: this.TABLE_NAME }).promise()
+    }
+
 
     // ------------------------------
     // CRUD Operations
@@ -172,12 +79,12 @@ export class DynamoDBService {
 
     /**
      * Add new customer to the database
-     * 
+     *
      * Note: Even though `age` is `number`, it is converted to `string`
      * because `string` is the expected type in the parameters.
      * `smile` is converted from boolean to number, then converted to string.
-     * 
-     * @param customer 
+     *
+     * @param customer
      * @returns a boolean that is true if the customer has been added successfully.
      */
     addCustomer(customer: Customer) {
@@ -210,7 +117,7 @@ export class DynamoDBService {
 
     /**
      * Get all customer form customer-demographics table
-     * 
+     *
      * @returns a promise that contains a list of all customers
      */
     getAllCustomers(): Promise<any> {
@@ -223,10 +130,10 @@ export class DynamoDBService {
     }
 
     /**
-     * Get cutomer by id
+     * Get customer by ID
      */
     getCustomerByID(id: string) {
-        var params = {
+        let params = {
             TableName: this.TABLE_NAME,
             Key: {
                 'customer-id': { S: id }
@@ -247,17 +154,17 @@ export class DynamoDBService {
         return customer
     }
 
-    
+
     //-------------------------------------------------------------------------------------
     //       Filtering Methods
     // The following methods should not be used unless necessary.
     // It is likely that we have already retrieved all the customers data first.
-    // So we could just filter the `customers` array to get customers by age, gender, etc. 
+    // So we could just filter the `customers` array to get customers by age, gender, etc.
     //-------------------------------------------------------------------------------------
 
     /**
-     * Get cutomers by age.
-     * 
+     * Get customers by age.
+     *
      * Warning: Prefer filtering the `customers` array whenever possible
      * to get customers by age.
      */
@@ -290,10 +197,10 @@ export class DynamoDBService {
 
     /**
      * Get cutomers by gender.
-     * 
+     *
      * Warning: Prefer filtering the `customers` array whenever possible
      * to get customers by gender.
-     * 
+     *
      * @param gender: either 'Male' or 'Female'
      * @returns an array of all the male customers
      */
@@ -326,7 +233,7 @@ export class DynamoDBService {
 
     /**
      * Get cutomers by emotions.
-     * 
+     *
      * Warning: Prefer filtering the `customers` array whenever possible
      * to get customers by emotions.
      */
@@ -360,7 +267,7 @@ export class DynamoDBService {
 
     /**
      * Get smiling cutomers.
-     * 
+     *
      * Warning: Prefer filtering the `customers` array whenever possible
      * to get customers who smile.
      */
@@ -389,19 +296,6 @@ export class DynamoDBService {
         })
 
         return customers
-    }
-
-    /**
-     * Get the table information. 
-     * 
-     * This method is used to get the number of customers in the table.
-     * Use a then/catch block to get a `response` and 
-     * get the items count with `response.Table.ItemCount`
-     * 
-     * @returns a promise that contains the table's information.
-     */
-    getTableInfo() {
-        return this.dynamodb.describeTable({ TableName: this.TABLE_NAME }).promise()
     }
 
 
