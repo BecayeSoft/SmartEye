@@ -3,6 +3,7 @@ An app that collect demographic data using cameras.
 
 #### TODO
 - [ ] Use birth date instead of age
+- [ ] Dynamic values
 
 Warning: Collecting individuals' data may be subject to some regulations. 
 [Find the official guiline here](https://www.priv.gc.ca/en/privacy-topics/surveillance/video-surveillance-by-businesses/gl_vs_080306/).
@@ -23,6 +24,10 @@ We needed a short development time, and a robust model. This is why I chose the 
 * Age: Rekognition provides an age range that is very acurate. However, the model is biaised on minority groups such as myself and may give poor age approximations.
 * Emotions: emotions are harder to interpret as they are subtle and subject to the complexity of humans.
 
+#### New Version: ChartJS
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/87549214/232987210-290a9d66-6813-456b-96c2-c999c076cdf4.png">
+
+#### Old version: Google Chart
 
 <img width="806" alt="image" src="https://user-images.githubusercontent.com/87549214/232167574-14932551-dcdc-4d2c-a798-91b8e5447ca8.png">
 
