@@ -43,6 +43,7 @@ We needed a short development time, and a robust model. This is why I chose the 
 ```
 git clone https://github.com/BecayeSoft/SmartEye
 cd SmartEye
+npm install
 ng serve --open
 ```
 
