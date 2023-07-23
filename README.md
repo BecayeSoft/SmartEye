@@ -1,6 +1,9 @@
 # Smart Eye
 An app that collect demographic data using cameras.
 
+⚠️ Smart Eye is still under development. Google Charts have been replaced by Charts which 
+means I have to properly format the data before linking it to the charts once again.
+
 #### TODO
 - [ ] Use birth date instead of age
 - [ ] Dynamic values
